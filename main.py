@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, render_template_string
 from datetime import datetime
-
+import pytz
+tz = pytz.timezone('Asia/Taipei')
 app = Flask(__name__)
 upload_log = []
 manual_water_flag = False
@@ -10,7 +11,7 @@ def upload():
     data = request.get_json()
     humidity = data.get('humidity')
     watered = data.get('watered')
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    timestamp = datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S")
     upload_log.append({
         'time': timestamp,
         'humidity': humidity,
