@@ -28,9 +28,23 @@ def water_now():
 @app.route('/api/check_water_command', methods=['GET'])
 def check_water_command():
     global manual_water_flag
+    global upload_log
+
+    # 檢查手動澆水
     if manual_water_flag:
         manual_water_flag = False
+        print("[CHECK] 觸發手動澆水")
         return jsonify({'water_now': True})
+
+    # 自動澆水條件 (濕度 < 500)
+    if upload_log:
+        latest_humidity = upload_log[-1]['humidity']
+        if isinstance(latest_humidity, str):
+            latest_humidity = float(latest_humidity)
+        if latest_humidity < 500:
+            print(f"[CHECK] 自動澆水觸發 (最新濕度: {latest_humidity})")
+            return jsonify({'water_now': True})
+
     return jsonify({'water_now': False})
 
 @app.route('/')
@@ -55,3 +69,4 @@ def index():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
+
